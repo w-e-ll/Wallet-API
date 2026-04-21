@@ -1,13 +1,11 @@
 from __future__ import annotations
-from typing import Literal
 
 from fastapi import FastAPI, HTTPException, Path, status
 
-from lib.models import Operation, Wallet
-from lib.validation import OperationRequest, OperationResponse, WalletResponse, ErrorResponse, CreateWalletRequest, TransferRequest
-from lib.wallet_repository import InMemoryWalletRepository, InMemoryIdempotencyRepository
-from lib.wallet_service import WalletService
-from lib.response_object import to_wallet_response, to_operation_response
+from wallet_api.lib.validation import OperationRequest, OperationResponse, WalletResponse, ErrorResponse, CreateWalletRequest, TransferRequest
+from wallet_api.lib.wallet_repository import InMemoryWalletRepository, InMemoryIdempotencyRepository
+from wallet_api.lib.wallet_service import WalletService
+from wallet_api.lib.response_object import to_wallet_response, to_operation_response
 
 app = FastAPI(title="Wallet API", version="1.0.0")
 

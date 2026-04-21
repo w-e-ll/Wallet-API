@@ -4,7 +4,7 @@ from typing import List
 
 from decimal import Decimal
 
-from lib.types import OperationType
+from wallet_api.lib.types import OperationType
 
 @dataclass
 class Operation:

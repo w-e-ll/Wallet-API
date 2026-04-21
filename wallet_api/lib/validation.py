@@ -2,7 +2,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 from datetime import datetime
 from decimal import Decimal, InvalidOperation
 
-from lib.types import OperationType
+from wallet_api.lib.types import OperationType
 
 class CreateWalletRequest(BaseModel):
     owner: str = Field(min_length=1, max_length=100)

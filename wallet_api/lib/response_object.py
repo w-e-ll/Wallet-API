@@ -1,5 +1,5 @@
-from lib.models import Operation, Wallet
-from lib.validation import OperationResponse, WalletResponse
+from wallet_api.lib.models import Operation, Wallet
+from wallet_api.lib.validation import OperationResponse, WalletResponse
 
 
 def to_wallet_response(wallet: Wallet) -> WalletResponse:

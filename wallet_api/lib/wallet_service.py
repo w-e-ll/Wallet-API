@@ -6,9 +6,9 @@ from uuid import uuid4
 
 from fastapi import HTTPException, status
 
-from lib.models import Operation, Wallet
-from lib.validation import TransferRequest
-from lib.wallet_repository import InMemoryWalletRepository, InMemoryIdempotencyRepository
+from wallet_api.lib.models import Operation, Wallet
+from wallet_api.lib.validation import TransferRequest
+from wallet_api.lib.wallet_repository import InMemoryWalletRepository, InMemoryIdempotencyRepository
 
 
 class WalletService:

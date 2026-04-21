@@ -1,5 +1,5 @@
 from typing import Optional, List, Dict
-from lib.models import Wallet, Operation
+from wallet_api.lib.models import Wallet, Operation
 
 
 class InMemoryWalletRepository:
