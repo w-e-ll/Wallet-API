@@ -98,6 +98,17 @@ GET /wallets/{wallet_id}
 ```
 GET /wallets/{wallet_id}/operations
 ```
+
+# Transfer
+```
+POST /wallets/transfer
+{
+  "from_wallet_id": "uuid",
+  "to_wallet_id": "uuid",
+  "amount": "100.00",
+  "idempotency_key": "transfer-123"
+}
+```
 ### 🔐 Idempotency
 
 Operations use an idempotency_key to guarantee safe retries.

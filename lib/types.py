@@ -1,3 +1,3 @@
 from typing import Literal
 
-OperationType = Literal["deposit", "withdraw"]
+OperationType = Literal["deposit", "withdraw", "transfer"]

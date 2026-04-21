@@ -8,6 +8,13 @@ class CreateWalletRequest(BaseModel):
     owner: str = Field(min_length=1, max_length=100)
 
 
+class TransferRequest(BaseModel):
+    from_wallet_id: str
+    to_wallet_id: str
+    amount: str
+    idempotency_key: str
+
+
 class WalletResponse(BaseModel):
     model_config: str = ConfigDict(from_attributes=True)
 

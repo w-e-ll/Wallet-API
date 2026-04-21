@@ -4,7 +4,7 @@ from typing import Literal
 from fastapi import FastAPI, HTTPException, Path, status
 
 from lib.models import Operation, Wallet
-from lib.validation import OperationRequest, OperationResponse, WalletResponse, ErrorResponse, CreateWalletRequest
+from lib.validation import OperationRequest, OperationResponse, WalletResponse, ErrorResponse, CreateWalletRequest, TransferRequest
 from lib.wallet_repository import InMemoryWalletRepository, InMemoryIdempotencyRepository
 from lib.wallet_service import WalletService
 from lib.response_object import to_wallet_response, to_operation_response
@@ -82,3 +82,17 @@ def withdraw(wallet_id: str, payload: OperationRequest) -> OperationResponse:
 def list_operation(wallet_id: str) -> list[OperationResponse]:
     operations = wallet_service.list_operations(wallet_id)
     return [to_operation_response(operation) for operation in operations]
+
+
+@app.post(
+    "/wallets/transfer",
+    response_model=OperationResponse,
+    status_code=status.HTTP_201_CREATED,
+    responses={
+        404: {"model": ErrorResponse},
+        409: {"model": ErrorResponse},
+    },
+)
+def transfer(payload: TransferRequest) -> OperationResponse:
+    operation = wallet_service.transfer(payload)
+    return to_operation_response(operation)

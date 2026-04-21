@@ -7,6 +7,7 @@ from uuid import uuid4
 from fastapi import HTTPException, status
 
 from lib.models import Operation, Wallet
+from lib.validation import TransferRequest
 from lib.wallet_repository import InMemoryWalletRepository, InMemoryIdempotencyRepository
 
 
@@ -95,4 +96,58 @@ class WalletService:
 
             wallet.operations.append(operation)
             self._idempotency_repository.save(wallet_id, idempotency_key, operation)
+            return operation
+
+    def transfer(self, req: TransferRequest) -> Operation:
+        try:
+            amount = Decimal(req.amount).quantize(Decimal("0.01"))
+        except InvalidOperation as exc:
+            raise HTTPException(400, "Amount must be a number") from exc
+
+        if amount <= 0:
+            raise HTTPException(400, "Amount must be positive")
+
+        with self._lock:
+            existing_operation = self._idempotency_repository.get(
+                req.from_wallet_id,
+                req.idempotency_key
+            )
+            if existing_operation:
+                if existing_operation.amount != amount:
+                    raise HTTPException(409, "Idempotency key conflict")
+                return existing_operation
+
+            from_wallet = self.get_wallet(req.from_wallet_id)
+            to_wallet = self.get_wallet(req.to_wallet_id)
+
+            if from_wallet.wallet_id == to_wallet.wallet_id:
+                raise HTTPException(400, "Cannot transfer to the same wallet")
+
+            if from_wallet.balance < amount:
+                raise HTTPException(
+                    status_code=status.HTTP_409_CONFLICT,
+                    detail="Insufficient funds"
+                )
+
+            from_wallet.balance -= amount
+            to_wallet.balance += amount
+
+            operation = Operation(
+                operation_id=str(uuid4()),
+                wallet_id=from_wallet.wallet_id,  # ключевая идея
+                operation_type="transfer",
+                amount=amount,
+                created_at=datetime.now(timezone.utc),
+                idempotency_key=req.idempotency_key
+            )
+
+            from_wallet.operations.append(operation)
+            to_wallet.operations.append(operation)
+
+            self._idempotency_repository.save(
+                req.from_wallet_id,
+                req.idempotency_key,
+                operation
+            )
+
             return operation
